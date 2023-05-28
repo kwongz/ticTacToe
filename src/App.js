@@ -9,21 +9,25 @@ function Square({ value, onSquareClick }) {
 }
 
 function Board({ xIsNext, squares, onPlay }) {
+    // this function handles click of a square
     function handleClick(i) {
+        // this section prevents the player from clicking on the same box or if there is a winner
         if (calculateWinner(squares) || squares[i]) {
             return;
         }
+        // creates shadow copy of array, and updates index of array that is either a "X" or "Y"
         const nextSquares = squares.slice();
         if (xIsNext) {
             nextSquares[i] = "X";
         } else {
             nextSquares[i] = "O";
         }
+        // passes updated squares array to Parent Game component
         onPlay(nextSquares);
     }
 
+    // this section runs calculateWinner and determines if there is a winner, if not switch players
     const winner = calculateWinner(squares);
-    console.log("...checking");
     let status;
     if (winner) {
         status = "Winner: " + winner;
@@ -60,19 +64,21 @@ export default function Game() {
     const currentSquares = history[currentMove];
 
     function handlePlay(nextSquares) {
+        // creates the next history by slicing into existent history based on the current move. This allows a record of history,
+        // while also allowing us to time travel back to a previous move, and create a new history from that point on
         const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-        setHistory([...history, nextSquares]);
+        setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
-        // setXIsNext(!xIsNext);
     }
 
     function jumpTo(nextMove) {
         setCurrentMove(nextMove);
-        // setXIsNext(nextMove % 2 === 0);
+        console.log(currentSquares);
+        console.log(history);
     }
 
+    // problem with move. onclick should set user to new latest history, instead goes back to first history
     const moves = history.map((squares, move) => {
-        console.log(move);
         let description;
         if (move > 0) {
             description = `Go to move # ${move}`;
